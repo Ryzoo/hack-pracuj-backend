@@ -11,10 +11,12 @@ const plugin = fp(
       const siteHeaderValue = decodeURI(
         // @ts-expect-error site is not defined on the request object
         request.params?.roomId ??
-          request.query?.roomId ??
-          request.body?.roomId ??
-          request.headers['x-room-id'] ??
-          '',
+        // @ts-expect-error site is not defined on the request object
+        request.query?.roomId ??
+        // @ts-expect-error site is not defined on the request object
+        request.body?.roomId ??
+        request.headers['x-room-id'] ??
+        '',
       );
 
       if (siteHeaderValue.length > 0) {
