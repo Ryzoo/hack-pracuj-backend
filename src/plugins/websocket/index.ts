@@ -74,7 +74,7 @@ const plugin = fp(
               },
             );
 
-            const newRoom = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).findOne(connection.room._id);
+            let newRoom = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).findOne(connection.room._id);
 
             if(newRoom?.users && newRoom?.users?.length > 0 && !newRoom.users.includes(newRoom.hostName)) {
               await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).updateOne(
@@ -89,6 +89,8 @@ const plugin = fp(
                   },
                 },
               );
+
+              newRoom = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).findOne(connection.room._id);
             }
 
             req.server.websocketService(req.server).send(
