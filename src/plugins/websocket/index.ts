@@ -60,10 +60,7 @@ const plugin = fp(
             if(connection.closeTimeout) {
               clearTimeout(connection.closeTimeout);
             }
-            console.log('disconnect: ',{
-              newRoom: connection.room,
-              userName: connection.userName,
-            });
+
             const db = req.server.mongo.db!;
             await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).updateOne(
               {
@@ -72,6 +69,7 @@ const plugin = fp(
               {
                 $pull: {
                   users: connection.userName,
+                  activeUsers: connection.userName,
                 },
               },
             );
