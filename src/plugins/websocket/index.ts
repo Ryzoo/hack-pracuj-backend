@@ -76,6 +76,21 @@ const plugin = fp(
 
             const newRoom = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).findOne(connection.room._id);
 
+            if(newRoom?.users && newRoom?.users?.length > 0 && !newRoom.users.includes(newRoom.hostName)) {
+              await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).updateOne(
+                {
+                  _id: connection.room._id,
+                },
+                {
+                  $set: {
+                    hostName: newRoom?.users[0],
+                    gameState: undefined,
+                    gameName: undefined,
+                  },
+                },
+              );
+            }
+
             req.server.websocketService(req.server).send(
               {
                 type: WebsocketMessageType.USER_EXIT,
