@@ -8,7 +8,7 @@ const plugin = fp(
     await server.register(websocket, {
       options: {
         clientTracking: true,
-      }
+      },
     });
 
     server.get(

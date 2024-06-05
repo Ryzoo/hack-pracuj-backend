@@ -1,0 +1,38 @@
+name: Release
+run-name: ${{ github.actor }} is releaseing ${{ github.ref }}
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env: # environment variables (available in any part of the action)
+  NODE_VERSION: 20
+  DOCKER_USER: ${{secrets.DOCKER_USER}}
+  GB_TOKEN: ${{secrets.GB_TOKEN}}
+
+jobs:
+  build-and-publish-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+
+      - name: Create .env
+        run: echo '${{ toJSON(secrets) }}' | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+
+      - name: docker login
+        run: | # log into docker hub account
+          echo $GB_TOKEN | docker login ghcr.io -u $DOCKER_USER --password-stdin
+
+      - name: Make lowercase app name
+        id: toLowerCase
+        run: echo "::set-output name=lowerCaseValue::${UPPERCASE_VAR,,}"
+        env:
+          UPPERCASE_VAR: ${{ secrets.APP_NAME }}
+
+      - name: Build the Docker image # push The image to the docker hub
+        run: docker build . --file Dockerfile --tag ghcr.io/ryzoo/${{steps.toLowerCase.outputs.lowerCaseValue}}:latest
+
+      - name: Docker Push
+        run: docker push ghcr.io/ryzoo/${{steps.toLowerCase.outputs.lowerCaseValue}}:latest

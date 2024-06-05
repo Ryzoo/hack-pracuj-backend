@@ -1,9 +1,9 @@
 import { FastifyJwtNamespace } from '@fastify/jwt';
 import { Transporter } from 'nodemailer';
 
+import RoomEntity from '../../room/entities/RoomEntity';
 import websocketService from '../../websocket/services/websocket-service';
 import { EnvSchemaType } from '../schema/env-schema';
-import RoomEntity from '../../room/entities/RoomEntity';
 
 export interface FastifyMailerNamedInstance {
   [namespace: string]: Transporter;

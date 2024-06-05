@@ -1,6 +1,5 @@
 import { Entity, IBaseEntity } from '../../core/entities/IEntity';
 
-
 export type RoomEntityData = IBaseEntity & {
   gameName?: string;
   gameState?: any;

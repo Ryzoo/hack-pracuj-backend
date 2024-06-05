@@ -1,20 +1,17 @@
 import { FastifyInstance } from 'fastify';
 
-import {
-  getBadRequestDefinition,
-  getBusinessRequestDefinition,
-} from '../../core/schema/request';
-import createRoomHandler from '../handlers/room/create-room-handler';
-import { RoomDtoSchema } from '../schema/dtos/room-dto';
-import getRoomHandler from '../handlers/room/get-room-handler';
-import deleteRoomHandler from '../handlers/room/delete-room-handler';
-import addUserHandler from '../handlers/user/add-user-handler';
-import removeUserHandler from '../handlers/user/remove-user-handler';
+import { getBadRequestDefinition, getBusinessRequestDefinition } from '../../core/schema/request';
 import changeGameHandler from '../handlers/game/change-game-handler';
 import changeGameStateHandler from '../handlers/game/change-game-state-handler';
-import { ChangeGameStateSchema } from '../schema/change-game-state-schema';
+import createRoomHandler from '../handlers/room/create-room-handler';
+import deleteRoomHandler from '../handlers/room/delete-room-handler';
+import getRoomHandler from '../handlers/room/get-room-handler';
+import addUserHandler from '../handlers/user/add-user-handler';
+import removeUserHandler from '../handlers/user/remove-user-handler';
 import { ChangeGameSchema } from '../schema/change-game-schema';
+import { ChangeGameStateSchema } from '../schema/change-game-state-schema';
 import { CreateRoomSchema } from '../schema/create-room-schema';
+import { RoomDtoSchema } from '../schema/dtos/room-dto';
 
 const routes = async (server: FastifyInstance) => {
   const createRoomSchema = {
@@ -54,7 +51,6 @@ const routes = async (server: FastifyInstance) => {
     },
   };
 
-
   const deleteRoomSchema = {
     onRequest: [server.roomContext],
     schema: {
@@ -71,7 +67,6 @@ const routes = async (server: FastifyInstance) => {
       },
     },
   };
-
 
   const removeUserFromRoomSchema = {
     onRequest: [server.roomContext],

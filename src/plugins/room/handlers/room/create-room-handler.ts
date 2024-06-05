@@ -9,9 +9,7 @@ const createRoomHandler: LogicRequestHandler<CreateRoomSchemaType> = async (req,
     hostName: req.body.hostName,
   });
 
-  const roomData = await db
-    .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
-    .insertOne(newRoom);
+  const roomData = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).insertOne(newRoom);
 
   return res.send({
     id: roomData.insertedId.toString(),

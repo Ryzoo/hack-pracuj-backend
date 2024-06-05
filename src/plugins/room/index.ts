@@ -1,17 +1,20 @@
+import { ObjectId } from '@fastify/mongodb';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
 
-import roomSite from './routes/routes-room';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import RoomEntity from './entities/RoomEntity';
-import { ObjectId } from '@fastify/mongodb';
+import roomSite from './routes/routes-room';
 
 const plugin = fp(
   async (server) => {
-
     server.decorate('roomContext', async (request: FastifyRequest, reply: FastifyReply) => {
       const siteHeaderValue = decodeURI(
         // @ts-expect-error site is not defined on the request object
-        request.params?.roomId ?? request.query?.roomId ?? request.body?.roomId ?? request.headers['x-room-id'] ?? '',
+        request.params?.roomId ??
+          request.query?.roomId ??
+          request.body?.roomId ??
+          request.headers['x-room-id'] ??
+          '',
       );
 
       if (siteHeaderValue.length > 0) {

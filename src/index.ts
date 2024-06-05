@@ -8,9 +8,9 @@ import fastify from 'fastify';
 
 import { EnvSchema } from './plugins/core/schema/env-schema';
 import coreDatabasePlugin from './plugins/database';
+import roomPlugin from './plugins/room';
 import coreSwaggerPlugin from './plugins/swagger';
 import coreWebsocketPlugin from './plugins/websocket';
-import roomPlugin from './plugins/room';
 
 async function main() {
   const server = fastify({
