@@ -6,6 +6,7 @@ export const RoomDtoSchema = Type.Object({
   users: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: 50 }))),
   lastActivity: Type.Optional(Type.String()),
   gameName: Type.Optional(Type.String({ minLength: 1, maxLength: 50 })),
+  activeUsers: Type.Array(Type.String({ minLength: 1, maxLength: 50 })),
   gameState: Type.Any(),
 });
 
