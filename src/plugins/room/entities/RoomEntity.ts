@@ -5,6 +5,7 @@ export type RoomEntityData = IBaseEntity & {
   gameState?: any;
   lastActivity?: Date;
   users?: string[];
+  activeUsers?: string[];
   hostName: string;
 };
 
@@ -15,6 +16,7 @@ class RoomEntity extends Entity<RoomEntityData> {
   gameState?: any;
   lastActivity?: Date;
   users?: string[];
+  activeUsers: string[];
   hostName: string;
 
   constructor(data: RoomEntityData) {
@@ -23,6 +25,7 @@ class RoomEntity extends Entity<RoomEntityData> {
     this.gameState = data.gameState;
     this.hostName = data.hostName;
     this.users = data.users || [];
+    this.activeUsers = data.activeUsers || [];
     this.lastActivity = data.lastActivity || new Date();
   }
 }

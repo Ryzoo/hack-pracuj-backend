@@ -12,6 +12,8 @@ import { ChangeGameSchema } from '../schema/change-game-schema';
 import { ChangeGameStateSchema } from '../schema/change-game-state-schema';
 import { CreateRoomSchema } from '../schema/create-room-schema';
 import { RoomDtoSchema } from '../schema/dtos/room-dto';
+import { ChangeActiveUsersSchema } from '../schema/change-active-users-schema';
+import changeActiveUsersHandler from '../handlers/user/change-active-users-handler';
 
 const routes = async (server: FastifyInstance) => {
   const createRoomSchema = {
@@ -111,6 +113,24 @@ const routes = async (server: FastifyInstance) => {
     },
   };
 
+  const changeActiveUsersSchema = {
+    onRequest: [server.roomContext],
+    schema: {
+      description: 'Change active users in room',
+      tags: ['Room'],
+      body: ChangeActiveUsersSchema,
+      response: {
+        200: {
+          description: 'Users changed',
+          type: 'object',
+          properties: {},
+        },
+        400: getBadRequestDefinition(),
+        409: getBusinessRequestDefinition(),
+      },
+    },
+  };
+
   const changeGameSchema = {
     onRequest: [server.roomContext],
     schema: {
@@ -154,6 +174,7 @@ const routes = async (server: FastifyInstance) => {
 
   // user management
   server.put('/user', addUserToRoomSchema, addUserHandler);
+  server.put('/user/active', changeActiveUsersSchema, changeActiveUsersHandler);
   server.delete('/user', removeUserFromRoomSchema, removeUserHandler);
 
   // game management

@@ -4,6 +4,7 @@ export enum WebsocketMessageType {
   GAME_CHANGED,
   GAME_STATE_CHANGED,
   ROOM_REMOVED,
+  ACTIVE_USERS_CHANGED,
 }
 
 type WebsocketMessage = {
