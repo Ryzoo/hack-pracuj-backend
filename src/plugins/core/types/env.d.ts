@@ -26,5 +26,8 @@ declare module 'fastify' {
 declare module 'ws' {
   interface WebSocket {
     room: RoomEntity;
+    userName: string;
+    closeTimeout?: NodeJS.Timeout;
+    pingInterval: NodeJS.Timeout;
   }
 }
