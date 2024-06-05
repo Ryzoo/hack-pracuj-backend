@@ -23,4 +23,4 @@ ENV NODE_ENV="production"
 
 HEALTHCHECK --interval=12s --timeout=12s --start-period=30s CMD curl --fail http://localhost:3030/monitoring/health || exit 1
 
-CMD [ "node --max-http-header-size 115000", "dist/index.js" ]
+CMD [ "node", "dist/index.js" ]
