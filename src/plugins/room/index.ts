@@ -1,37 +1,41 @@
 import fp from 'fastify-plugin';
 
-import { QueueNames } from '../core/types/queue-names';
-import cleanSiteData from './consumers/clean-site-data';
-import domainSite from './routes/routes-domain';
-import routesSite from './routes/routes-site';
-import addDomainsToSiteTask from './scheduled/add-domains-to-site-task';
-import checkDomainsDnsTask from './scheduled/check-domains-dns-task';
-import createDomainsSslTask from './scheduled/create-domains-ssl-task';
+import roomSite from './routes/routes-room';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import RoomEntity from './entities/RoomEntity';
+import { ObjectId } from '@fastify/mongodb';
 
 const plugin = fp(
   async (server) => {
-    server.rabbitmq.createConsumer(
-      {
-        queue: QueueNames.CLEAN_SITE_DATA,
-        queueOptions: {
-          durable: true,
-        },
-        qos: { prefetchCount: 2 },
-      },
-      (msq) => cleanSiteData(server, msq),
-    );
 
-    server.register(routesSite, { prefix: '/api/v1/site' });
-    server.register(domainSite, { prefix: '/api/v1/site/domain' });
+    server.decorate('roomContext', async (request: FastifyRequest, reply: FastifyReply) => {
+      const siteHeaderValue = decodeURI(
+        // @ts-expect-error site is not defined on the request object
+        request.params?.roomId ?? request.query?.roomId ?? request.body?.roomId ?? request.headers['x-room-id'] ?? '',
+      );
 
-    // At every minute.
-    server.crons.schedule('* * * * *', checkDomainsDnsTask(server));
-    server.crons.schedule('* * * * *', createDomainsSslTask(server));
-    server.crons.schedule('* * * * *', addDomainsToSiteTask(server));
+      if (siteHeaderValue.length > 0) {
+        const db = request.server.mongo.db!;
+        const room = await db.collection<RoomEntity>(RoomEntity.ENTITY_NAME).findOne({
+          _id: new ObjectId(siteHeaderValue),
+        });
+
+        if (room) {
+          request.room = room;
+          return;
+        }
+      }
+
+      return reply.code(403).send({
+        message: 'You do not have permission to access this resource without a valid room context',
+      });
+    });
+
+    server.register(roomSite, { prefix: '/api/v1/room' });
   },
   {
-    name: 'core-site',
-    dependencies: ['core-database', 'core-queue'],
+    name: 'core-room',
+    dependencies: ['core-database'],
   },
 );
 

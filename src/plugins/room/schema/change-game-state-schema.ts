@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const ChangeGameSchema = Type.Object({
-  gameName: Type.String({ minLength: 1, maxLength: 50 }),
+export const ChangeGameStateSchema = Type.Object({
+  gameState: Type.Any(),
 });
 
-export type ChangeGameSchemaType = Static<typeof ChangeGameSchema>;
+export type ChangeGameStateSchemaType = Static<typeof ChangeGameStateSchema>;

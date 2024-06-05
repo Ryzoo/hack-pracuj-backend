@@ -1,21 +1,34 @@
 import { LogicRequestHandler } from '../../../core/types/logic-request-handler';
-import { CreateRoomSchemaType } from '../../schema/add-site-by-creator-schema';
 import RoomEntity from '../../entities/RoomEntity';
+import { WebsocketMessageType } from '../../../websocket/types/websocket-message';
 
-const createRoomHandler: LogicRequestHandler<CreateRoomSchemaType> = async (req, res) => {
+const changeGameHandler: LogicRequestHandler<{ gameName: string }> = async (req, res) => {
   const db = req.server.mongo.db!;
+  const { gameName } = req.body;
+  const room = req.room as RoomEntity;
 
-  const newRoom = new RoomEntity({
-    hostName: req.body.hostName,
-  });
-
-  const roomData = await db
+  await db
     .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
-    .insertOne(newRoom);
+    .updateOne({
+      _id: room._id,
+    }, {
+      $set: {
+        gameName,
+      },
+    });
 
-  return res.send({
-    id: roomData.insertedId.toString(),
-  });
+  const newRoom = await db
+    .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
+    .findOne(room._id);
+
+  req.server.websocketService(req.server).send({
+    type: WebsocketMessageType.GAME_CHANGED,
+    payload: {
+      room: newRoom
+    }
+  }, room._id.toString());
+
+  return res.send();
 };
 
-export default createRoomHandler;
+export default changeGameHandler;

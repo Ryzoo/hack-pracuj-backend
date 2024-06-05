@@ -1,24 +1,36 @@
 import { LogicRequestHandler } from '../../../core/types/logic-request-handler';
 import RoomEntity from '../../entities/RoomEntity';
+import { WebsocketMessageType } from '../../../websocket/types/websocket-message';
 
-const addUserHandler: LogicRequestHandler<{ userName: string }> = async (req, res) => {
+const removeUserHandler: LogicRequestHandler<never, { userName: string }> = async (req, res) => {
   const db = req.server.mongo.db!;
-  const { userName } = req.body;
+  const { userName } = req.query;
   const room = req.room as RoomEntity;
 
-  if(!(room.users ?? []).includes(userName)){
+  if((room.users ?? []).includes(userName)){
     await db
       .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
       .updateOne({
         _id: room._id,
       }, {
-        $push: {
+        $pull: {
           users: userName,
         },
       });
+
+    const newRoom = await db
+      .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
+      .findOne(room._id);
+
+    req.server.websocketService(req.server).send({
+      type: WebsocketMessageType.USER_EXIT,
+      payload: {
+        room: newRoom
+      }
+    }, room._id.toString());
   }
 
-  return res.send(});
+  return res.send({});
 };
 
-export default addUserHandler;
+export default removeUserHandler;

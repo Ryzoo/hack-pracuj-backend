@@ -1,21 +1,24 @@
 import { LogicRequestHandler } from '../../../core/types/logic-request-handler';
-import { CreateRoomSchemaType } from '../../schema/add-site-by-creator-schema';
 import RoomEntity from '../../entities/RoomEntity';
+import { ObjectId } from '@fastify/mongodb';
 
-const createRoomHandler: LogicRequestHandler<CreateRoomSchemaType> = async (req, res) => {
+const getRoomHandler: LogicRequestHandler<never, never, {id:string}> = async (req, res) => {
   const db = req.server.mongo.db!;
-
-  const newRoom = new RoomEntity({
-    hostName: req.body.hostName,
-  });
+  const { id } = req.params;
 
   const roomData = await db
     .collection<RoomEntity>(RoomEntity.ENTITY_NAME)
-    .insertOne(newRoom);
+    .findOne({
+      _id: new ObjectId(id),
+    });
 
-  return res.send({
-    id: roomData.insertedId.toString(),
-  });
+  if (!roomData) {
+    return res.code(404).send({
+      message: 'Room not found',
+    });
+  }
+
+  return res.send(roomData);
 };
 
-export default createRoomHandler;
+export default getRoomHandler;
