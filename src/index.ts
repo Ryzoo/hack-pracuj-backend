@@ -17,9 +17,6 @@ async function main() {
     logger: true,
     exposeHeadRoutes: true,
     trustProxy: true,
-    ajv: {
-      plugins: [ajvFilePlugin],
-    },
   }).withTypeProvider<TypeBoxTypeProvider>();
 
   await server.register(compress);
@@ -29,10 +26,6 @@ async function main() {
   await server.register(env, {
     dotenv: true,
     schema: EnvSchema,
-  });
-  await server.register(cors, {
-    origin: '*',
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
   });
 
   await server.register(coreSwaggerPlugin);
