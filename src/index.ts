@@ -27,6 +27,10 @@ async function main() {
     dotenv: true,
     schema: EnvSchema,
   });
+  await server.register(cors, {
+    origin: '*',
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
+  });
 
   await server.register(coreSwaggerPlugin);
   await server.register(coreDatabasePlugin);
